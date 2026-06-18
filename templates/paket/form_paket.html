@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-sm btn-secondary">&larr; Kembali ke Daftar Paket</a>
+</div>
+
+<div class="card shadow-sm border">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0 fw-bold">Form Input Paket Pengadaan Baru</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('paket.tambah_paket') }}">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Kode RUP / Paket</label>
+                    <input type="text" name="kode_paket" class="form-control" placeholder="Contoh: 45678123" required>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold">Nama Paket Pengadaan</label>
+                    <input type="text" name="nama_paket" class="form-control" placeholder="Masukkan nama paket secara lengkap" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Nilai HPS (Rp)</label>
+                    <input type="number" step="any" name="nilai_hps" class="form-control" placeholder="Contoh: 150000000" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Sumber Dana</label>
+                    <input type="text" name="sumber_dana" class="form-control" placeholder="Contoh: APBN T.A 2026" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Satuan Kerja / Unit Kerja</label>
+                    <input type="text" name="unit_kerja" class="form-control" placeholder="Contoh: Balai Diklat" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Nama Pejabat Pembuat Komitmen (PPK)</label>
+                    <input type="text" name="nama_ppk" class="form-control" value="Muhamad Firmansyah" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Diserahkan / Ditugaskan Kepada Pokmil</label>
+                    <select name="assigned_pokmil" class="form-select">
+                        <option value="">-- Simpan sebagai Draf (Belum Ditugaskan) --</option>
+                        {% for p in daftar_pokmil %}
+                            <option value="{{ p[0] }}">{{ p[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Jenis Pengadaan</label>
+                    <select name="jenis_pengadaan" class="form-select" required>
+                        <option value="Barang">Barang</option>
+                        <option value="Pekerjaan Konstruksi">Pekerjaan Konstruksi</option>
+                        <option value="Jasa Konsultan">Jasa Konsultan</option>
+                        <option value="Jasa Lainnya">Jasa Lainnya</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Metode Pemilihan</label>
+                    <select name="metode_pemilihan" class="form-select" required>
+                        <option value="Tender">Tender</option>
+                        <option value="Tender Cepat">Tender Cepat</option>
+                        <option value="Seleksi">Seleksi</option>
+                        <option value="Penunjukan Langsung">Penunjukan Langsung</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Metode Kualifikasi</label>
+                    <select name="metode_kualifikasi" class="form-select" required>
+                        <option value="Pascakualifikasi">Pascakualifikasi</option>
+                        <option value="Prakualifikasi">Prakualifikasi</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="text-end mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary px-4 fw-bold">Simpan Paket Pengadaan</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

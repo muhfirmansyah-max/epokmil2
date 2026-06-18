@@ -1,0 +1,17 @@
+ldp_alamat_pejabat_pengadaan
+ldp_dibiayai_dari_sumber_pendanaan_dip
+ldp_dipa_dpa_satuan_kerja_tahun_anggar
+ldp_isian
+ldp_isian_2
+ldp_isian_3
+ldp_isian_4
+ldp_isian_5
+ldp_isian_6
+ldp_jenis_kontrak_yang_digunakan
+ldp_kode_rup
+ldp_nama_paket_pengadaan
+ldp_nama_pejabat_pengadaan
+ldp_nama_satuan_kerja_perangkat_daerah
+ldp_satuan_kerja_kementerian_lembaga_p
+ldp_uraian_singkat_paket_pengadaan
+ldp_website_spse

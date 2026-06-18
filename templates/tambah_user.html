@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Tambah Akun Personil Baru</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" name="nama_lengkap" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Peran</label>
+                            <select name="peran" class="form-control" required>
+                                <option value="Pokmil">Pokmil</option>
+                                <option value="Katim">Katim</option>
+                                <option value="Kepala UKPBJ">Kepala UKPBJ</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nama Pokmil (Wajib diisi jika peran Pokmil)</label>
+                            <input type="text" name="nama_pokmil" class="form-control" placeholder="Contoh: Pokmil 01">
+                            <small class="text-muted">Biarkan kosong jika peran bukan Pokmil.</small>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Simpan Akun</button>
+                            <a href="{{ url_for('beranda') }}" class="btn btn-link text-secondary mt-2">Batal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

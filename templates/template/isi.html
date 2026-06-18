@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3"><a href="{{ url_for('template_dokpil.daftar') }}" class="btn btn-sm btn-secondary">&larr; Daftar Template</a></div>
+
+<div class="card shadow-sm mb-3 border-primary">
+    <div class="card-header bg-primary text-white"><h5 class="mb-0 fw-bold">Isi Template: {{ t.nama }}</h5></div>
+    <div class="card-body">
+        <span class="badge bg-secondary">{{ t.kategori }}</span>
+        <span class="text-muted ms-2">{{ jumlah }} field. Isi yang perlu; yang dikosongkan akan tetap kosong di dokumen.</span>
+    </div>
+</div>
+
+{% if jumlah == 0 %}
+<div class="alert alert-warning">Template ini tidak memiliki field terdeteksi. Coba impor ulang dengan lingkup "Semua bagian ber-isian".</div>
+{% else %}
+<form method="POST">
+    {% for nama_grup, fields in grup.items() %}
+    <div class="card shadow-sm mb-3">
+        <div class="card-header fw-bold">{{ nama_grup }} ({{ fields|length }})</div>
+        <div class="card-body row g-3">
+            {% for f in fields %}
+            <div class="col-md-6">
+                <label class="form-label mb-1 small">{{ f.label }}</label>
+                <input name="{{ f.key }}" class="form-control form-control-sm">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="position-sticky bottom-0 bg-white border-top py-2 text-end">
+        <button class="btn btn-primary fw-bold">⬇ Generate &amp; Unduh (.docx)</button>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

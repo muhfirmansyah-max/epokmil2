@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Daftar Akun Personil</h3>
+    {% if current_user.peran == 'Admin' %}
+    <a href="{{ url_for('admin.tambah_akun') }}" class="btn btn-primary">+ Tambah Akun</a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped mb-0 align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th class="ps-3">Username</th>
+                    <th>Nama Lengkap</th>
+                    <th>Peran</th>
+                    <th>Pokmil</th>
+                    {% if current_user.peran == 'Admin' %}<th class="text-center pe-3">Aksi</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td class="ps-3 fw-semibold">{{ u.username }}</td>
+                    <td>{{ u.nama_lengkap }}</td>
+                    <td>
+                        {% if u.peran == 'Admin' %}<span class="badge bg-danger">Admin</span>
+                        {% elif u.peran == 'Katim' %}<span class="badge bg-info text-dark">Katim</span>
+                        {% else %}<span class="badge bg-secondary">{{ u.peran }}</span>{% endif %}
+                    </td>
+                    <td>{{ u.nama_pokmil or '-' }}</td>
+                    {% if current_user.peran == 'Admin' %}
+                    <td class="text-center pe-3">
+                        <a href="{{ url_for('admin.edit_user', user_id=u.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        {% if u.id != current_user.id %}
+                        <form method="POST" action="{{ url_for('admin.hapus_user', user_id=u.id) }}" class="d-inline"
+                              onsubmit="return confirm('Hapus akun {{ u.username }}?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                        </form>
+                        {% else %}
+                        <span class="text-muted small">(akun Anda)</span>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">Belum ada akun.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

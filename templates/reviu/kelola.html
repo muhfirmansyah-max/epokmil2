@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-sm btn-secondary">&larr; Kembali ke Daftar Paket</a>
+</div>
+
+<div class="card shadow-sm mb-4 border-info">
+    <div class="card-body">
+        <h5 class="fw-bold text-info">Monitoring Progres: {{ paket.nama_paket }}</h5>
+        <div class="progress" style="height: 30px;">
+            {% set color = 'bg-danger' if progress < 30 else 'bg-warning' if progress < 70 else 'bg-success' %}
+            <div class="progress-bar progress-bar-striped {{ color }}" style="width: {{ progress }}%;">
+                {{ progress }}% Selesai
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if current_user.peran == 'Pokmil' %}
+    <form method="POST">
+        <div class="card shadow-sm mb-4 border">
+            <div class="card-header bg-primary text-white fw-bold">Lembar Kerja Evaluasi Reviu Dokumen</div>
+            <div class="card-body p-0">
+                <table class="table table-bordered align-middle mb-0">
+                    <div class="card bg-white shadow-sm mb-4 border">
+    <div class="card-header bg-dark text-white fw-bold">Informasi Paket Utama</div>
+    <div class="card-body row g-2 py-3">
+        <div class="col-md-6"><strong>Nama Paket:</strong> {{ paket.nama_paket }}</div>
+        <div class="col-md-6"><strong>Nilai HPS:</strong> Rp {{ "{:,.0f}".format(paket.nilai_hps) }}</div>
+    </div>
+</div>
+
+<form method="POST">
+    <div class="card shadow-sm mb-4 border">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">Lembar Kerja Evaluasi Reviu Dokumen Persiapan</h5>
+            <span class="badge bg-light text-primary fw-bold">Rekomendasi MDP: {{ rekomendasi_mdp }}</span>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th width="5%" class="text-center">No</th>
+                        <th width="42%">Unsur yang Direviu</th>
+                        <th width="13%" class="text-center">Kesesuaian</th>
+                        <th width="40%">Catatan Reviewer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set nomor_global = namespace(value=1) %}
+                    {% for nama_grup in ['KAK', 'Spesifikasi Teknis', 'HPS', 'Rancangan Kontrak', 'Anggaran', 'RUP', 'Survei Pasar'] %}
+                        <tr class="table-secondary fw-bold text-dark">
+                            <td colspan="4" class="py-2 px-3">Unsur: {{ nama_grup }}</td>
+                        </tr>
+                        {% for det in detail_unsur if det.kelompok == nama_grup %}
+                        <tr>
+                            <td class="text-center text-muted">{{ nomor_global.value }}</td>
+                            <td>{{ det.nama_unsur }}</td>
+                            <td>
+                                {% if current_user.peran == 'Katim' %}
+                                    <span class="badge {{ 'bg-success' if det.kesesuaian == 'Sesuai' else 'bg-danger' }}">{{ det.kesesuaian }}</span>
+                                {% else %}
+                                    <select name="status_{{ det.id }}" class="form-select form-select-sm">
+                                        <option value="Sesuai" {% if det.kesesuaian == 'Sesuai' %}selected{% endif %}>Sesuai</option>
+                                        <option value="Tidak Sesuai" {% if det.kesesuaian == 'Tidak Sesuai' %}selected{% endif %}>Tidak Sesuai</option>
+                                    </select>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if current_user.peran == 'Katim' %}
+                                    <div style="white-space: pre-wrap">{{ det.catatan_reviu or '-' }}</div>
+                                {% else %}
+                                    <textarea name="catatan_{{ det.id }}" class="form-control form-control-sm" rows="3" placeholder="Tuliskan catatan/temuan reviu di sini...">{{ det.catatan_reviu or '' }}</textarea>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% set nomor_global.value = nomor_global.value + 1 %}
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4 border">
+        <div class="card-header bg-success text-white fw-bold">Berita Acara Reviu</div>
+        <div class="card-body row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Nomor BA</label>
+                {% if current_user.peran == 'Katim' %}
+                    <p class="form-control-static">{{ reviu.nomor_ba_reviu or '-' }}</p>
+                {% else %}
+                    <input type="text" name="nomor_ba_reviu" class="form-control" value="{{ reviu.nomor_ba_reviu or '' }}" required>
+                {% endif %}
+            </div>
+            </div>
+                    </table>
+            </div>
+        </div>
+            <div class="card-body row g-3">
+                <button type="submit" class="btn btn-success">Simpan Kertas Kerja</button>
+            </div>
+        </div>
+    </form>
+{% else %}
+    <div class="alert alert-info">
+        <h5 class="alert-heading">Mode Monitoring</h5>
+        <p>Anda sedang memantau progres paket <strong>{{ paket.nama_paket }}</strong>. Data kertas kerja bersifat rahasia dan hanya dapat diubah oleh tim Pokmil yang bertugas.</p>
+        <a href="{{ url_for('reviu_dokpil.unduh_ba_reviu', paket_id=paket.id) }}" class="btn btn-primary">Unduh BA Reviu (.docx)</a>
+    </div>
+{% endif %}
+
+{% endblock %}

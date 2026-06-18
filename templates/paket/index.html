@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Daftar Paket Pengadaan</h3>
+    {% if current_user.peran in ['Admin', 'Katim'] %}
+    <a href="{{ url_for('paket.tambah_paket') }}" class="btn btn-primary">+ Tambah Paket Baru</a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th class="ps-3">Kode Paket</th>
+                    <th>Nama Paket</th>
+                    <th>Pagu / HPS</th>
+                    <th>Metode Pemilihan</th>
+                    <th>Status</th>
+                    <th class="text-center pe-3">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {# Variabel daftar_paket sekarang sudah difilter di routes.py #}
+                {% for p in daftar_paket %}
+                <tr>
+                    <td class="ps-3 fw-semibold">{{ p.kode_paket or '-' }}</td>
+                    <td>{{ p.nama_paket }} ({{ p.tahun_anggaran }})</td>
+                    <td>Rp{{ "{:,.0f}".format(p.nilai_hps) }}</td>
+                    <td>{{ p.metode_pemilihan }}</td>
+                    <td>
+                        {% if p.status_paket == 'Draf' %}
+                        <span class="badge bg-secondary">Draf</span>
+                        {% elif p.status_paket == 'Reviu' %}
+                        <span class="badge bg-warning text-dark">Reviu Dokumen</span>
+                        {% elif p.status_paket == 'Dokpil' %}
+                        <span class="badge bg-primary">Penyusunan Dokpil</span>
+                        {% else %}
+                        <span class="badge bg-success">{{ p.status_paket }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center pe-3">
+                        <div class="d-flex flex-wrap gap-1 justify-content-center">
+                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('reviu_dokpil.kelola_reviu', paket_id=p.id) }}" title="Berita Acara Reviu">a&middot;Reviu</a>
+                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('reviu_dokpil.dokpil', paket_id=p.id) }}" title="Dokumen Pemilihan">b&middot;Dokpil</a>
+                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('evaluasi.kelola', paket_id=p.id) }}" title="Kertas Kerja Evaluasi">c&middot;Evaluasi</a>
+                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('penetapan.kelola', paket_id=p.id) }}" title="Penetapan Pemenang">d&middot;Penetapan</a>
+                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('laporan.kelola', paket_id=p.id) }}" title="Laporan Hasil Tender">e&middot;Laporan</a>
+                            {% if current_user.peran in ['Admin', 'Katim'] %}
+                            <a class="btn btn-sm btn-warning" href="{{ url_for('paket.edit_paket', paket_id=p.id) }}">Ubah</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        {% if current_user.peran == 'Pokmil' %}
+                            Belum ada paket yang didistribusikan ke Pokja Anda.
+                        {% else %}
+                            Belum ada data paket pengadaan.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('reviu_dokpil.dokpil', paket_id=paket.id) }}" class="btn btn-sm btn-secondary">&larr; Ke Dokpil</a>
+</div>
+
+<div class="card shadow-sm mb-3 border-primary">
+    <div class="card-header bg-primary text-white"><h5 class="mb-0 fw-bold">Isian Data Dokpil (Mail Merge)</h5></div>
+    <div class="card-body">
+        <strong>{{ paket.nama_paket }}</strong>
+        <p class="text-muted mb-0 mt-1">Field menyesuaikan <b>{{ paket.metode_pemilihan }}</b> &middot; <b>{{ paket.jenis_pengadaan }}</b> &middot; <b>{{ paket.metode_kualifikasi }}</b>. Nilai di sini mengisi token LDP/LDK saat Dokpil di-generate.</p>
+        <span class="badge bg-info text-dark mt-2">Sumber field: {{ sumber }}</span>
+    </div>
+</div>
+
+<form method="POST">
+    {% for g in grup %}
+    <div class="card shadow-sm mb-3">
+        <div class="card-header fw-bold">{{ g.judul }}</div>
+        <div class="card-body row g-3">
+            {% for f in g.fields %}
+            <div class="col-md-6">
+                <label class="form-label mb-1">{{ f.label }}{% if f.ket %} <small class="text-muted">({{ f.ket }})</small>{% endif %}</label>
+                {% if f.tipe == 'select' %}
+                <select name="{{ f.key }}" class="form-select">
+                    <option value="">— pilih —</option>
+                    {% for o in f.opsi %}<option value="{{ o }}" {% if nilai.get(f.key) == o %}selected{% endif %}>{{ o }}</option>{% endfor %}
+                </select>
+                {% elif f.tipe == 'textarea' %}
+                <textarea name="{{ f.key }}" class="form-control" rows="2">{{ nilai.get(f.key, '') }}</textarea>
+                {% elif f.tipe == 'number' %}
+                <input type="number" step="any" name="{{ f.key }}" class="form-control" value="{{ nilai.get(f.key, '') }}">
+                {% elif f.tipe == 'date' %}
+                <input type="date" name="{{ f.key }}" class="form-control" value="{{ nilai.get(f.key, '') }}">
+                {% else %}
+                <input type="text" name="{{ f.key }}" class="form-control" value="{{ nilai.get(f.key, '') }}">
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="position-sticky bottom-0 bg-white border-top py-2 text-end">
+        <a href="{{ url_for('reviu_dokpil.unduh_dokpil', paket_id=paket.id) }}" class="btn btn-outline-primary">⬇ Generate Dokpil</a>
+        <button class="btn btn-primary fw-bold">💾 Simpan Isian</button>
+    </div>
+</form>
+{% endblock %}

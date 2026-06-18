@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3"><a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-sm btn-secondary">&larr; Kembali</a></div>
+
+<div class="card shadow-sm mb-3 border-primary">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">Dokumen Pemilihan (Dokpil) &mdash; Mail Merge</h5>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('reviu_dokpil.isian_dokpil', paket_id=paket.id) }}" class="btn btn-warning btn-sm fw-bold">✎ Isi Data (Mail Merge)</a>
+            {% if tersedia %}
+            <a href="{{ url_for('reviu_dokpil.unduh_dokpil', paket_id=paket.id) }}" class="btn btn-light btn-sm fw-bold">⬇ Generate &amp; Unduh (.docx)</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="mb-1"><strong>{{ paket.nama_paket }}</strong></p>
+        <small class="text-muted">{{ paket.metode_pemilihan }} &middot; {{ paket.jenis_pengadaan }} &middot; {{ paket.metode_kualifikasi }}</small>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-header fw-bold">Template Dokumen Pemilihan</div>
+    <div class="card-body">
+        <form method="POST" class="row g-2 align-items-end">
+            <div class="col-md-9">
+                <label class="form-label mb-1">Pilih template dari Manajemen Template</label>
+                <select name="template_id" class="form-select">
+                    <option value="">— Otomatis dari MDP standar ({{ auto_file }}) —</option>
+                    {% for t in templates %}
+                    <option value="{{ t.id }}" {% if terpilih and terpilih.id == t.id %}selected{% endif %}>
+                        {{ t.nama }} [{{ t.kategori }}] — {{ t.jumlah_field }} field
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100">Simpan Pilihan</button>
+            </div>
+        </form>
+        <div class="mt-3">
+            {% if terpilih %}
+            <span class="badge bg-success">Memakai template terkelola: {{ terpilih.nama }}</span>
+            <small class="text-muted d-block mt-1">Form "Isi Data" akan mengikuti field template ini, dan hasil generate memakai template ini.</small>
+            {% elif auto_tersedia %}
+            <span class="badge bg-info text-dark">Otomatis: <code>{{ auto_file }}</code> tersedia</span>
+            {% else %}
+            <span class="badge bg-warning text-dark">Belum ada sumber template</span>
+            <div class="alert alert-warning mt-2 mb-0">Pilih template di atas (impor lewat menu <b>Template</b>), atau letakkan file <code>{{ auto_file }}</code> di folder <code>templates_dokumen/</code>.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-bold bg-success-subtle">✓ Terisi otomatis dari data paket (LDP)</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        {% for label, nilai in auto_fields %}
+                        <tr><td class="text-muted" style="width:45%">{{ label }}</td><td class="fw-semibold">{{ nilai }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-bold bg-warning-subtle">✎ Diisi manual oleh Pokja di Word</div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    {% for f in manual_fields %}<li>{{ f }}</li>{% endfor %}
+                </ul>
+                <small class="text-muted d-block mt-2">Field ini dibiarkan kosong di dokumen hasil (keputusan pemilihan), siap Anda lengkapi.</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('evaluasi.kelola', paket_id=paket.id) }}" class="btn btn-sm btn-secondary">&larr; Ke Evaluasi</a>
+</div>
+
+{# Form edit (kosong) — input di dalam tabel terhubung lewat atribut form="editKriteria" #}
+{% if boleh_ubah %}<form method="POST" id="editKriteria"><input type="hidden" name="aksi" value="simpan"></form>{% endif %}
+
+<div class="card shadow-sm mb-3 border-primary">
+    <div class="card-header bg-primary text-white"><h5 class="mb-0 fw-bold">Setting Kriteria Kertas Kerja</h5></div>
+    <div class="card-body">
+        <strong>{{ paket.nama_paket }}</strong>
+        <p class="text-muted mb-2 mt-1">Kriteria <b>Teknis</b> diambil dari <b>LKE</b> pada LDP; kriteria <b>Kualifikasi</b> dari persyaratan pada <b>LDK</b>.</p>
+        {% if boleh_ubah %}
+        <form method="POST" action="{{ url_for('evaluasi.isi_otomatis', paket_id=paket.id) }}"
+              onsubmit="return confirm('Isi kriteria standar LKPP sesuai jenis pengadaan? Hanya mengisi kelompok yang masih kosong.')">
+            <button class="btn btn-sm btn-success fw-bold">⚡ Isi Otomatis dari Standar (LKE/LDK)</button>
+            <small class="text-muted ms-2">Menyemai kriteria standar; bobot/ambang &amp; persyaratan tetap dapat disesuaikan di bawah.</small>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if boleh_ubah %}
+<div class="card shadow-sm mb-3 border-info">
+    <div class="card-header bg-info-subtle fw-bold">Template Kriteria (pakai ulang antar paket)</div>
+    <div class="card-body row g-3">
+        <div class="col-md-7">
+            <form method="POST" action="{{ url_for('evaluasi.terapkan_template_kriteria', paket_id=paket.id) }}" class="row g-2 align-items-end">
+                <div class="col-8">
+                    <label class="form-label mb-0 small">Terapkan template tersimpan</label>
+                    <select name="template_id" class="form-select form-select-sm" required>
+                        <option value="">— pilih template —</option>
+                        {% for t in templates %}
+                        <option value="{{ t.id }}">{{ t.nama }} {% if t.jenis_pengadaan %}({{ t.jenis_pengadaan }}){% endif %}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-4"><button class="btn btn-sm btn-info w-100">Terapkan</button></div>
+            </form>
+        </div>
+        <div class="col-md-5">
+            <form method="POST" action="{{ url_for('evaluasi.simpan_template_kriteria', paket_id=paket.id) }}" class="row g-2 align-items-end">
+                <div class="col-8">
+                    <label class="form-label mb-0 small">Simpan kriteria saat ini sebagai template</label>
+                    <input name="nama_template" class="form-control form-control-sm" placeholder="Nama template" required>
+                </div>
+                <div class="col-4"><button class="btn btn-sm btn-outline-secondary w-100">💾 Simpan</button></div>
+            </form>
+        </div>
+        {% if templates %}
+        <div class="col-12">
+            <small class="text-muted">Tersimpan:</small>
+            {% for t in templates %}
+            <form method="POST" action="{{ url_for('evaluasi.hapus_template_kriteria', template_id=t.id) }}" class="d-inline" onsubmit="return confirm('Hapus template kriteria ini?')">
+                <input type="hidden" name="paket_id" value="{{ paket.id }}">
+                <span class="badge bg-light text-dark border">{{ t.nama }} <button class="btn btn-sm btn-link text-danger p-0 ms-1" style="line-height:1">&times;</button></span>
+            </form>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{# ---------------- TEKNIS (LKE) ---------------- #}
+<div class="card shadow-sm mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-bold">A. Kriteria Teknis (sumber: LKE pada LDP)</span>
+        <span class="badge {% if total_bobot == 100 %}bg-success{% else %}bg-warning text-dark{% endif %}">Total bobot: {{ '%g' % total_bobot }}%</span>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm align-middle mb-0">
+            <thead class="table-light">
+                <tr><th width="40">No</th><th>Unsur/Kriteria Teknis</th><th width="110">Bobot (%)</th><th width="110">Ambang</th>{% if boleh_ubah %}<th width="50"></th>{% endif %}</tr>
+            </thead>
+            <tbody>
+                {% for k in teknis %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    {% if boleh_ubah %}
+                    <td><input form="editKriteria" name="nama_{{ k.id }}" value="{{ k.nama_kriteria }}" class="form-control form-control-sm"></td>
+                    <td><input form="editKriteria" name="bobot_{{ k.id }}" type="number" step="any" value="{{ '%g' % (k.bobot or 0) }}" class="form-control form-control-sm"></td>
+                    <td><input form="editKriteria" name="ambang_{{ k.id }}" type="number" step="any" value="{{ '%g' % (k.ambang_batas or 0) }}" class="form-control form-control-sm"></td>
+                    <td><form method="POST" onsubmit="return confirm('Hapus kriteria ini?')">
+                        <input type="hidden" name="aksi" value="hapus"><input type="hidden" name="kriteria_id" value="{{ k.id }}">
+                        <button class="btn btn-sm btn-outline-danger">&times;</button></form></td>
+                    {% else %}
+                    <td>{{ k.nama_kriteria }}</td><td>{{ '%g' % (k.bobot or 0) }}</td><td>{{ '%g' % (k.ambang_batas or 0) }}</td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-3">Belum ada kriteria teknis.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if boleh_ubah %}
+    <div class="card-footer">
+        <form method="POST" class="row g-2 align-items-end">
+            <input type="hidden" name="aksi" value="tambah"><input type="hidden" name="kelompok" value="Teknis">
+            <div class="col-md-6"><label class="form-label mb-0 small">Tambah Unsur Teknis (LKE)</label><input name="nama_kriteria" class="form-control form-control-sm" required></div>
+            <div class="col-md-2"><label class="form-label mb-0 small">Bobot (%)</label><input name="bobot" type="number" step="any" class="form-control form-control-sm" value="0"></div>
+            <div class="col-md-2"><label class="form-label mb-0 small">Ambang</label><input name="ambang_batas" type="number" step="any" class="form-control form-control-sm" value="0"></div>
+            <div class="col-md-2"><button class="btn btn-sm btn-primary w-100">+ Tambah</button></div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+{# ---------------- KUALIFIKASI (LDK) ---------------- #}
+<div class="card shadow-sm mb-3">
+    <div class="card-header fw-bold">B. Persyaratan Kualifikasi (sumber: LDK)</div>
+    <div class="card-body p-0">
+        <table class="table table-sm align-middle mb-0">
+            <thead class="table-light"><tr><th width="40">No</th><th>Persyaratan Kualifikasi</th>{% if boleh_ubah %}<th width="50"></th>{% endif %}</tr></thead>
+            <tbody>
+                {% for k in kualifikasi %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    {% if boleh_ubah %}
+                    <td><input form="editKriteria" name="nama_{{ k.id }}" value="{{ k.nama_kriteria }}" class="form-control form-control-sm"></td>
+                    <td><form method="POST" onsubmit="return confirm('Hapus persyaratan ini?')">
+                        <input type="hidden" name="aksi" value="hapus"><input type="hidden" name="kriteria_id" value="{{ k.id }}">
+                        <button class="btn btn-sm btn-outline-danger">&times;</button></form></td>
+                    {% else %}
+                    <td>{{ k.nama_kriteria }}</td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="text-center text-muted py-3">Belum ada persyaratan kualifikasi.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if boleh_ubah %}
+    <div class="card-footer">
+        <form method="POST" class="row g-2 align-items-end">
+            <input type="hidden" name="aksi" value="tambah"><input type="hidden" name="kelompok" value="Kualifikasi">
+            <div class="col-md-10"><label class="form-label mb-0 small">Tambah Persyaratan Kualifikasi (LDK)</label><input name="nama_kriteria" class="form-control form-control-sm" required></div>
+            <div class="col-md-2"><button class="btn btn-sm btn-primary w-100">+ Tambah</button></div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+{% if boleh_ubah and (teknis or kualifikasi) %}
+<div class="position-sticky bottom-0 bg-white border-top py-2 text-end">
+    <small class="text-muted me-2">Ubah nama/bobot/ambang di atas, lalu simpan.</small>
+    <button form="editKriteria" class="btn btn-primary fw-bold">💾 Simpan Perubahan</button>
+</div>
+{% endif %}
+{% endblock %}

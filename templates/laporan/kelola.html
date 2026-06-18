@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3"><a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-sm btn-secondary">&larr; Kembali</a></div>
+
+<div class="card shadow-sm mb-3 border-dark">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">Laporan Hasil Tender (e)</h5>
+        <a href="{{ url_for('laporan.unduh', paket_id=paket.id) }}" class="btn btn-sm btn-light fw-bold">Unduh Laporan (.docx)</a>
+    </div>
+    <div class="card-body"><strong>{{ paket.nama_paket }}</strong></div>
+</div>
+
+<form method="POST">
+<div class="card shadow-sm mb-3">
+    <div class="card-body row g-3">
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Nomor Laporan</label>
+            <input name="nomor_laporan" class="form-control" value="{{ laporan.nomor_laporan or '' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Tanggal</label>
+            <input name="tanggal" type="date" class="form-control" value="{{ laporan.tanggal or '' }}">
+        </div>
+        <div class="col-12">
+            <label class="form-label fw-bold">Ringkasan / Kesimpulan</label>
+            <textarea name="ringkasan" class="form-control" rows="3">{{ laporan.ringkasan or '' }}</textarea>
+            <small class="text-muted">Kosongkan untuk otomatis terisi nama pemenang dari penetapan.</small>
+        </div>
+    </div>
+</div>
+<button class="btn btn-dark">Simpan &amp; Tandai Selesai</button>
+</form>
+{% endblock %}

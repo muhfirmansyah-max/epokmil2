@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3"><a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-sm btn-secondary">&larr; Kembali</a></div>
+<div class="card shadow-sm">
+    <div class="card-header fw-bold">Ubah Paket: {{ paket.nama_paket }}</div>
+    <div class="card-body">
+        <form method="POST" class="row g-3">
+            <div class="col-md-8"><label class="form-label">Nama Paket</label><input name="nama_paket" class="form-control" value="{{ paket.nama_paket }}" required></div>
+            <div class="col-md-4"><label class="form-label">Kode Paket / RUP</label><input name="kode_paket" class="form-control" value="{{ paket.kode_paket or '' }}"></div>
+            <div class="col-md-6"><label class="form-label">Unit Kerja</label><input name="unit_kerja" class="form-control" value="{{ paket.unit_kerja }}"></div>
+            <div class="col-md-6"><label class="form-label">Nama PPK</label><input name="nama_ppk" class="form-control" value="{{ paket.nama_ppk }}"></div>
+            <div class="col-md-6"><label class="form-label">Nilai HPS</label><input name="nilai_hps" type="number" class="form-control" value="{{ paket.nilai_hps|int }}"></div>
+            <div class="col-md-6"><label class="form-label">Sumber Dana</label><input name="sumber_dana" class="form-control" value="{{ paket.sumber_dana }}"></div>
+            <div class="col-md-4"><label class="form-label">Jenis Pengadaan</label><input name="jenis_pengadaan" class="form-control" value="{{ paket.jenis_pengadaan }}"></div>
+            <div class="col-md-4"><label class="form-label">Metode Pemilihan</label><input name="metode_pemilihan" class="form-control" value="{{ paket.metode_pemilihan }}"></div>
+            <div class="col-md-4"><label class="form-label">Metode Kualifikasi</label><input name="metode_kualifikasi" class="form-control" value="{{ paket.metode_kualifikasi }}"></div>
+            <div class="col-md-6">
+                <label class="form-label">Pokmil Pelaksana</label>
+                <select name="assigned_pokmil" class="form-select">
+                    <option value="">— belum ditugaskan —</option>
+                    {% for row in daftar_pokmil %}
+                    <option value="{{ row[0] }}" {% if paket.assigned_pokmil == row[0] %}selected{% endif %}>{{ row[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12"><button class="btn btn-primary">Simpan Perubahan</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Himpun Personil Menjadi Pokmil</h2>
+    
+    <form method="POST" action="{{ url_for('auth.tambah_pokmil') }}">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Nama Pokmil Baru (Contoh: Pokmil 1)</label>
+            <input type="text" name="nama_pokmil" class="form-control" placeholder="Masukkan nama kelompok" required>
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Pilih</th>
+                    <th>Nama Personil</th>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in calon_anggota %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="anggota" value="{{ p.id }}">
+                    </td>
+                    <td>{{ p.nama_lengkap }}</td>
+                    <td>{{ p.username }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <button type="submit" class="btn btn-primary">Himpun ke Pokmil</button>
+    </form>
+</div>
+{% endblock %}

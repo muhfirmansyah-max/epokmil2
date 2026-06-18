@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="fw-bold mb-3">Manajemen Template Dokpil</h3>
+
+{% if boleh_kelola %}
+<div class="card shadow-sm mb-4 border-primary">
+    <div class="card-header bg-primary text-white fw-bold">Impor Dokumen → Jadikan Template</div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('template_dokpil.upload') }}" enctype="multipart/form-data" class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label">Berkas Dokumen (.docx)</label>
+                <input type="file" name="file" accept=".docx" class="form-control" required>
+                <small class="text-muted">File .doc lama: buka di Word lalu Save As .docx dulu.</small>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Nama Template</label>
+                <input name="nama" class="form-control" placeholder="mis. Tender Pascakualifikasi Barang">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Kategori</label>
+                <select name="kategori" class="form-select">
+                    <option value="Dokpil">Dokpil</option>
+                    <option value="Dokumen Kualifikasi">Dokumen Kualifikasi</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Cara Deteksi Field</label>
+                <select name="lingkup" class="form-select">
+                    <option value="manual">Sudah saya tandai {{ '{{ }}' }} (paling akurat)</option>
+                    <option value="ldp_ldk">Otomatis: LDP &amp; LDK saja</option>
+                    <option value="semua">Otomatis: Semua bagian ber-isian</option>
+                </select>
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button class="btn btn-success w-100 fw-bold">⬆ Impor &amp; Buat Template</button>
+            </div>
+        </form>
+        <small class="text-muted d-block mt-2">Saat impor: titik isian (garis bawah / <code>[diisi …]</code>) di LDP/LDK otomatis diubah menjadi token, lalu form isiannya dibuat dari daftar token tersebut.</small>
+        <div class="alert alert-info mt-3 mb-0 small">
+            <b>Paling akurat — tandai sendiri di Word sebelum impor:</b> ketik token di tiap titik isian, contoh
+            <code>{{ '{{ masa_berlaku_penawaran }}' }}</code>, lalu pilih mode <b>"Sudah saya tandai"</b>.
+            Aturan nama: huruf kecil/angka/garis bawah, tanpa spasi, diawali huruf. Beri awalan
+            <code>ldp_</code> atau <code>ldk_</code> agar field dikelompokkan otomatis di form (mis.
+            <code>{{ '{{ ldk_kualifikasi_usaha }}' }}</code>).
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-header fw-bold">Daftar Template ({{ templates|length }})</div>
+    <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr><th>Nama</th><th>Kategori</th><th class="text-center">Field</th><th>Asal Berkas</th><th class="text-end pe-3">Aksi</th></tr>
+            </thead>
+            <tbody>
+                {% for t in templates %}
+                <tr>
+                    <td class="fw-semibold">{{ t.nama }}</td>
+                    <td><span class="badge bg-secondary">{{ t.kategori }}</span></td>
+                    <td class="text-center">{{ t.jumlah_field }}</td>
+                    <td><small class="text-muted">{{ t.original_filename }}</small></td>
+                    <td class="text-end pe-3">
+                        <a href="{{ url_for('template_dokpil.isi', template_id=t.id) }}" class="btn btn-sm btn-primary">✎ Isi &amp; Unduh</a>
+                        {% if boleh_kelola %}
+                        <form method="POST" action="{{ url_for('template_dokpil.hapus', template_id=t.id) }}" class="d-inline" onsubmit="return confirm('Hapus template ini?')">
+                            <button class="btn btn-sm btn-outline-danger">Hapus</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">Belum ada template. Impor dokumen di atas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

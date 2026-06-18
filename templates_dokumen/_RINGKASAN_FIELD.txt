@@ -1,0 +1,20 @@
+Ringkasan field per template (LDP+LDK):
+  IV.1 - MDP Tender Pascakualifikasi Pengadaan Barang [TEMPLATE]         LDP=53 LDK=10
+  IV.11.B -  MDP Penunjukan Langsung Pengadaan Jasa Konsultansi Badan Usaha(Dokumen Penunjukan Langsung) [TEMPLATE] LDP=29 LDK=0
+  IV.12.B - MDP Penunjukan Langsung Jasa Konsultansi Perorangan (Dokumen Penunjukan Langsung) [TEMPLATE] LDP=29 LDK=0
+  IV.13 - MDP Pengadan Langsung Barang [TEMPLATE]                        LDP=17 LDK=0
+  IV.14 - MDP Pengadaan Langsung Pengadaan Jasa Lainnya [TEMPLATE]       LDP=17 LDK=0
+  IV.15 MDP - Pengadaan Langsung Pengadaan Jasa Konsultansi Badan Usaha [TEMPLATE] LDP=17 LDK=0
+  IV.16 - MDP Pengadaan Langsung Pengadaan Jasa Konsultansi Perorangan [TEMPLATE] LDP=17 LDK=0
+  IV.2.A - MDP Tender Prakualifikasi Pengadaan Barang (Dok. Kualifikasi) [TEMPLATE] LDP=0 LDK=26
+  IV.2.B - MDP Tender Prakualifikasi Pengadaan Barang (Dok. Tender) [TEMPLATE] LDP=53 LDK=0
+  IV.3 - MDP Tender Cepat Pengadaan Barang [TEMPLATE]                    LDP=20 LDK=0
+  IV.4 - MDP Tender Pascakualifikasi Pengadaan Jasa Lainnya [TEMPLATE]   LDP=52 LDK=12
+  IV.5.A - MDP Tender Prakualifikasi Pengadaan Jasa Lainnya (Dok. Kualifikasi)  [TEMPLATE] LDP=0 LDK=25
+  IV.5.B - MDP Tender Prakualifikasi Pengadaan Jasa Lainnya (Dok. Tender) [TEMPLATE] LDP=55 LDK=0
+  IV.6 - MDP Tender Cepat Pengadaan Jasa Lainnya [TEMPLATE]              LDP=21 LDK=0
+  IV.7.B - MDP Seleksi Pengadaan Jasa Konsultansi Badan Usaha (Dok. Seleksi) [TEMPLATE] LDP=29 LDK=0
+  IV.8 - MDP Seleksi Pengadaan Jasa Konsultansi Perorangan [TEMPLATE]    LDP=28 LDK=8
+  V.1 - MDP Pengadaan Langsung JKK Perorangan [TEMPLATE]                 LDP=19 LDK=0
+  V.2 - MDP Pengadaan Langsung JKK Badan Usaha [TEMPLATE]                LDP=20 LDK=0
+  V.3 - MDP Pengadaan Langsung PK Perorangan [TEMPLATE]                  LDP=19 LDK=0

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKK-Pokja Pemilihan</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gaya.css') }}">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('beranda') }}">Dokumen Digital Pokja</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if current_user.is_authenticated %}
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('beranda') }}">Beranda</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('paket.daftar_paket') }}">Daftar Paket</a>
+                    </li>
+
+                    {% if current_user.peran in ['Admin', 'Katim'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('template_dokpil.daftar') }}">Template</a>
+                    </li>
+                    {% endif %}
+
+                    {% if current_user.peran == 'Admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.tambah_user') }}">Manajemen User</a>
+                    </li>
+                    {% endif %}
+
+                    {% if current_user.peran in ['Katim', 'Kepala UKPBJ'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('paket.daftar_paket') }}">Monitoring Paket</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.manajemen_user') }}">
+                        <i class="bi bi-people"></i> Manajemen Personil
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if current_user.peran == 'Pokmil' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('paket.daftar_paket') }}">Tugas Saya</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <div class="navbar-nav">
+                    <span class="nav-item nav-link text-light me-3">
+                        Halo, {{ current_user.nama_lengkap }} ({{ current_user.peran }})
+                    </span>
+                    <a class="btn btn-outline-danger btn-sm my-auto" href="{{ url_for('auth.logout') }}">Keluar</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

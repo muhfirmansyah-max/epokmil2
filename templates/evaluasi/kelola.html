@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-sm btn-secondary">&larr; Kembali</a>
+</div>
+
+<div class="card shadow-sm mb-3 border-primary">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">Kertas Kerja Evaluasi (c)</h5>
+        <div>
+            <a href="{{ url_for('evaluasi.kelola_kriteria', paket_id=paket.id) }}" class="btn btn-sm btn-warning fw-bold">⚙ Setting Kriteria</a>
+            <a href="{{ url_for('evaluasi.unduh_excel', paket_id=paket.id) }}" class="btn btn-sm btn-light fw-bold">Unduh Excel (berformula)</a>
+            <a href="{{ url_for('evaluasi.unduh_word', paket_id=paket.id) }}" class="btn btn-sm btn-outline-light">Unduh Word</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="mb-1"><strong>{{ paket.nama_paket }}</strong></p>
+        <small class="text-muted">HPS: Rp {{ "{:,.0f}".format(paket.nilai_hps) }} | Metode: {{ paket.metode_pemilihan }}</small>
+        <div class="mt-2">
+            <span class="badge bg-secondary">Kriteria Teknis (LKE): {{ jml_teknis }}</span>
+            <span class="badge bg-secondary">Persyaratan Kualifikasi (LDK): {{ jml_kualifikasi }}</span>
+            {% if jml_teknis == 0 and jml_kualifikasi == 0 %}
+            <span class="text-danger small d-block mt-1">Belum ada kriteria. Klik "Setting Kriteria" agar kertas kerja tersusun dari LKE & LDK.</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if boleh_ubah %}
+<div class="card shadow-sm mb-3">
+    <div class="card-header fw-bold">Tambah Peserta (Penyedia)</div>
+    <div class="card-body">
+        <form method="POST" class="row g-2">
+            <input type="hidden" name="aksi" value="tambah">
+            <div class="col-md-5"><input name="nama_penyedia" class="form-control" placeholder="Nama Penyedia" required></div>
+            <div class="col-md-3"><input name="npwp" class="form-control" placeholder="NPWP"></div>
+            <div class="col-md-3"><input name="harga_penawaran" type="number" class="form-control" placeholder="Harga Penawaran"></div>
+            <div class="col-md-1"><button class="btn btn-success w-100">+</button></div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<form method="POST">
+<div class="card shadow-sm mb-3">
+    <div class="card-header bg-dark text-white fw-bold">Evaluasi Penawaran</div>
+    <div class="card-body p-0">
+        <table class="table table-bordered align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>No</th><th>Penyedia</th><th>Penawaran</th><th>Terkoreksi</th>
+                    <th>Adm.</th><th>Teknis</th><th>Kualifikasi</th><th>Catatan</th>
+                    {% if boleh_ubah %}<th></th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for ps in peserta %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ ps.nama_penyedia }}<br><small class="text-muted">{{ ps.npwp or '' }}</small></td>
+                    <td><input name="penawaran_{{ ps.id }}" type="number" class="form-control form-control-sm" value="{{ ps.harga_penawaran|int }}" {{ '' if boleh_ubah else 'disabled' }}></td>
+                    <td><input name="terkoreksi_{{ ps.id }}" type="number" class="form-control form-control-sm" value="{{ ps.harga_terkoreksi|int }}" {{ '' if boleh_ubah else 'disabled' }}></td>
+                    {% for field, val in [('adm', ps.eval_administrasi), ('teknis', ps.eval_teknis), ('kual', ps.eval_kualifikasi)] %}
+                    <td>
+                        <select name="{{ field }}_{{ ps.id }}" class="form-select form-select-sm" {{ '' if boleh_ubah else 'disabled' }}>
+                            {% for opt in pilihan %}<option value="{{ opt }}" {% if val == opt %}selected{% endif %}>{{ opt }}</option>{% endfor %}
+                        </select>
+                    </td>
+                    {% endfor %}
+                    <td><input name="catatan_{{ ps.id }}" class="form-control form-control-sm" value="{{ ps.catatan or '' }}" {{ '' if boleh_ubah else 'disabled' }}></td>
+                    {% if boleh_ubah %}
+                    <td>
+                        <button formmethod="POST" name="aksi" value="hapus" class="btn btn-sm btn-outline-danger"
+                                onclick="this.form.querySelector('[name=peserta_id]').value={{ ps.id }}">&times;</button>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr><td colspan="9" class="text-center text-muted py-4">Belum ada peserta. Tambahkan di atas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<input type="hidden" name="peserta_id" value="">
+{% if boleh_ubah and peserta %}
+<button class="btn btn-primary" name="aksi" value="simpan">Simpan Hasil Evaluasi</button>
+{% endif %}
+</form>
+{% endblock %}

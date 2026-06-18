@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Dashboard EPOKMIL</h2>
+    <p class="text-muted">Selamat datang kembali, <strong>{{ current_user.nama_lengkap }}</strong>.</p>
+
+    {% if current_user.peran == 'Admin' %}
+<div class="card p-4 shadow-sm mb-4">
+    <h4>Panel Administrator</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <a href="{{ url_for('auth.tambah_user') }}" class="btn btn-primary w-100">Tambah Akun Personil</a>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-secondary w-100">Backup Database</button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if current_user.peran == 'Katim' %}
+<div class="card p-4 shadow-sm mb-4 border-info">
+    <h4 class="text-info">Panel Kepala Tim (Katim)</h4>
+    <p>Gunakan menu ini untuk menghimpun personil menjadi Pokmil.</p>
+    <div class="row">
+        <div class="col-md-6">
+            <a href="{{ url_for('auth.tambah_pokmil') }}" class="btn btn-info text-white w-100">Himpun Personil ke Pokmil</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+    {% if current_user.peran == 'Pokmil' %}
+    <div class="alert alert-primary">
+        <h5>Halo Pokmil {{ current_user.nama_pokmil }}</h5>
+        <p>Berikut adalah paket yang didelegasikan kepada kelompok Anda.</p>
+    </div>
+    {% endif %}
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header">Daftar Paket Terkini</div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Kode</th>
+                        <th>Nama Paket</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paket in daftar_paket %}
+                    <tr>
+                        <td>{{ paket.kode_paket }}</td>
+                        <td>{{ paket.nama_paket }}</td>
+                        <td><span class="badge bg-secondary">{{ paket.status_paket }}</span></td>
+                        <td>
+                            <a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-sm btn-outline-primary">Lihat Detail</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="text-center text-muted mt-5 mb-3">
+    <hr class="w-25 mx-auto">
+    <p class="mb-0 small">Developed by <strong>Muhamad Firmansyah, S.Kom, MT.</strong></p>
+    <p class="mb-0 small">Pengelola PBJ Ahli Muda</p>
+</div>
+{% endblock %}

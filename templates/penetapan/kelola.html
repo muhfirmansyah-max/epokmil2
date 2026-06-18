@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3"><a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-sm btn-secondary">&larr; Kembali</a></div>
+
+<div class="card shadow-sm mb-3 border-success">
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">Penetapan Pemenang (d)</h5>
+        <a href="{{ url_for('penetapan.unduh', paket_id=paket.id) }}" class="btn btn-sm btn-light fw-bold">Unduh SK (.docx)</a>
+    </div>
+    <div class="card-body"><strong>{{ paket.nama_paket }}</strong> — HPS Rp {{ "{:,.0f}".format(paket.nilai_hps) }}</div>
+</div>
+
+{% if not peserta_lulus %}
+<div class="alert alert-warning">Belum ada peserta yang lulus seluruh tahap evaluasi. Lengkapi evaluasi (c) terlebih dahulu.</div>
+{% endif %}
+
+<form method="POST">
+<div class="card shadow-sm mb-3">
+    <div class="card-body row g-3">
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Nomor SK Penetapan</label>
+            <input name="nomor_sk" class="form-control" value="{{ penetapan.nomor_sk or '' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Tanggal</label>
+            <input name="tanggal_sk" type="date" class="form-control" value="{{ penetapan.tanggal_sk or '' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Pemenang</label>
+            <select name="pemenang_id" class="form-select">
+                <option value="">— pilih —</option>
+                {% for p in peserta_lulus %}
+                <option value="{{ p.id }}" {% if penetapan.pemenang_id == p.id %}selected{% endif %}>
+                    {{ p.nama_penyedia }} — Rp {{ "{:,.0f}".format(p.harga_terkoreksi) }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Pemenang Cadangan</label>
+            <select name="cadangan_id" class="form-select">
+                <option value="">— tidak ada —</option>
+                {% for p in peserta_lulus %}
+                <option value="{{ p.id }}" {% if penetapan.cadangan_id == p.id %}selected{% endif %}>
+                    {{ p.nama_penyedia }} — Rp {{ "{:,.0f}".format(p.harga_terkoreksi) }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12">
+            <label class="form-label fw-bold">Dasar Penetapan</label>
+            <textarea name="dasar_penetapan" class="form-control" rows="2">{{ penetapan.dasar_penetapan or '' }}</textarea>
+        </div>
+    </div>
+</div>
+<button class="btn btn-success">Simpan Penetapan</button>
+</form>
+{% endblock %}

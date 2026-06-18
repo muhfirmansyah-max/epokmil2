@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow-sm max-width-800 mx-auto">
+    <div class="card-header bg-dark text-white py-3">
+        <h5 class="mb-0">Form Input Data Paket Baru</h5>
+    </div>
+    <div class="card-body p-4">
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label">Nama Paket Pengadaan</label>
+                    <input type="text" name="nama_paket" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Kode Paket / RUP</label>
+                    <input type="text" name="kode_paket" class="form-control" placeholder="Contoh: PKJ-001" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tahun Anggaran</label>
+                    <input type="number" name="tahun_anggaran" class="form-control" value="2026" required>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">SKPD / Unit Kerja Satker</label>
+                    <input type="text" name="unit_kerja" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nama Pejabat Pembuat Komitmen (PPK)</label>
+                    <input type="text" name="nama_ppk" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tugaskan ke Pokmil</label>
+                    <select name="assigned_pokmil" class="form-select">
+                        <option value="">-- belum ditugaskan (Draf) --</option>
+                        {% for row in daftar_pokmil %}
+                        <option value="{{ row[0] }}">{{ row[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Nilai HPS (Rp)</label>
+                    <input type="number" step="any" name="nilai_hps" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Sumber Dana</label>
+                    <input type="text" name="sumber_dana" placeholder="Contoh: APBD / APBN" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tanggal Reviu</label>
+                    <input type="date" name="tanggal_reviu" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Jenis Pengadaan</label>
+                    <select name="jenis_pengadaan" class="form-select" required>
+                        <option value="">-- pilih --</option>
+                        <option value="Barang">Barang</option>
+                        <option value="Pekerjaan Konstruksi">Pekerjaan Konstruksi</option>
+                        <option value="Jasa Lainnya">Jasa Lainnya</option>
+                        <option value="Jasa Konsultansi Badan Usaha">Jasa Konsultansi Badan Usaha</option>
+                        <option value="Jasa Konsultansi Perorangan">Jasa Konsultansi Perorangan</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Metode Pemilihan</label>
+                    <select name="metode_pemilihan" class="form-select" required>
+                        <option value="">-- pilih --</option>
+                        <option value="Tender">Tender</option>
+                        <option value="Tender Cepat">Tender Cepat</option>
+                        <option value="Seleksi">Seleksi</option>
+                        <option value="Pengadaan Langsung">Pengadaan Langsung</option>
+                        <option value="Penunjukan Langsung">Penunjukan Langsung</option>
+                        <option value="E-purchasing">E-purchasing</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Metode Kualifikasi</label>
+                    <select name="metode_kualifikasi" class="form-select" required>
+                        <option value="Pascakualifikasi">Pascakualifikasi</option>
+                        <option value="Prakualifikasi">Prakualifikasi</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{{ url_for('paket.daftar_paket') }}" class="btn btn-secondary">Batal</a>
+                <button type="submit" class="btn btn-success px-4">Simpan Paket Pengadaan</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4 col-md-6">
+    <h3>Tambah Akun Personil Baru</h3>
+    <form method="POST">
+        <div class="mb-3">
+            <label>Username</label>
+            <input type="text" name="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>Nama Lengkap</label>
+            <input type="text" name="nama_lengkap" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>Peran</label>
+            <select name="peran" class="form-select">
+                <option value="Admin">Admin</option>
+                <option value="Katim">Katim</option>
+                <option value="Pokmil">Pokmil</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Nama Pokmil</label>
+            <input type="text" name="nama_pokmil" class="form-control" placeholder="Kosongkan jika bukan Pokmil">
+        </div>
+        <button type="submit" class="btn btn-success w-100">Simpan Akun</button>
+    </form>
+</div>
+{% endblock %}
